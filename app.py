@@ -66,7 +66,7 @@ def casting_rendering(dataDir , opacity):
 
     volumeColor = vtk.vtkColorTransferFunction()
     volumeColor.AddRGBPoint(0,    0.0, 0.0, 0.0)
-    volumeColor.AddRGBPoint(500,  1.0, 0.5, 0.3)
+    volumeColor.AddRGBPoint(500,  opacity[2], opacity[1], opacity[0])
     volumeColor.AddRGBPoint(1000, 1.0, 0.5, 0.3)
     volumeColor.AddRGBPoint(1150, 1.0, 1.0, 0.9)
 
@@ -74,10 +74,10 @@ def casting_rendering(dataDir , opacity):
     # The opacity transfer function is used to control the opacity
     # of different tissue types.
     volumeScalarOpacity = vtk.vtkPiecewiseFunction()
-    volumeScalarOpacity.AddPoint(0,    opacity[0])
-    volumeScalarOpacity.AddPoint(500,  opacity[1])
-    volumeScalarOpacity.AddPoint(1000, opacity[2])
-    volumeScalarOpacity.AddPoint(1150, opacity[3])
+    volumeScalarOpacity.AddPoint(0,    0)
+    volumeScalarOpacity.AddPoint(500,  opacity[3])
+    volumeScalarOpacity.AddPoint(1000, 0.15)
+    volumeScalarOpacity.AddPoint(1150, 0.85)
 
     volumeGradientOpacity = vtk.vtkPiecewiseFunction()
     volumeGradientOpacity.AddPoint(0,   0.0)
