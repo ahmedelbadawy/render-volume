@@ -21,16 +21,17 @@ class MainWindow(QtWidgets.QMainWindow , main_gui.Ui_MainWindow):
         self.opacity = [self.verticalSlider.value()/100.0 , self.verticalSlider_2.value()/100.0 , self.verticalSlider_3.value()/100.0 , self.verticalSlider_4.value()/100.0]
         self.pushButton.clicked.connect(lambda: self.open_file(0))
         self.pushButton_2.clicked.connect(lambda: self.open_file(1))
-        if self.dataDir:
-            self.horizontalSlider.valueChanged.connect(iso_slider)
-            self.verticalSlider.valueChanged.connect(lambda:casting_rendering(self.opacity_slider))
-            self.verticalSlider_2.valueChanged.connect(lambda:casting_rendering(self.opacity_slider))
-            self.verticalSlider_3.valueChanged.connect(lambda:casting_rendering(self.opacity_slider))
-            self.verticalSlider_4.valueChanged.connect(lambda:casting_rendering(self.opacity_slider))
+
+        self.horizontalSlider.valueChanged.connect(iso_slider)
+        self.verticalSlider.valueChanged.connect(self.opacity_slider)
+        self.verticalSlider_2.valueChanged.connect(self.opacity_slider)
+        self.verticalSlider_3.valueChanged.connect(self.opacity_slider)
+        self.verticalSlider_4.valueChanged.connect(self.opacity_slider)
 
     def opacity_slider(self):
         self.opacity = [self.verticalSlider.value()/100.0 , self.verticalSlider_2.value()/100.0 , self.verticalSlider_3.value()/100.0 , self.verticalSlider_4.value()/100.0]
-        casting_rendering(self.dataDir , self.opacity)
+        if self.dataDir:
+            casting_rendering(self.dataDir , self.opacity)
 
     def open_file(self , type):
         self.dataDir= QtWidgets.QFileDialog.getExistingDirectory(self, "Select Directory")
@@ -38,7 +39,7 @@ class MainWindow(QtWidgets.QMainWindow , main_gui.Ui_MainWindow):
         # print(self.dataDir)
         if self.dataDir:
             if type:
-                casting_rendering(self.dataDir)
+                casting_rendering(self.dataDir, self.opacity)
             else:
                 surface_rendering(self.dataDir)
 
