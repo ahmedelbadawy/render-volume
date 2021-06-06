@@ -6,7 +6,6 @@ import main_gui
 import os 
 
 surfaceExtractor = vtk.vtkContourFilter()
-volumeScalarOpacity = vtk.vtkPiecewiseFunction()
 
 def iso_slider(val):
 
@@ -18,28 +17,20 @@ class MainWindow(QtWidgets.QMainWindow , main_gui.Ui_MainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
-
+        self.dataDir = None
+        self.opacity = [self.verticalSlider.value()/100.0 , self.verticalSlider_2.value()/100.0 , self.verticalSlider_3.value()/100.0 , self.verticalSlider_4.value()/100.0]
         self.pushButton.clicked.connect(lambda: self.open_file(0))
         self.pushButton_2.clicked.connect(lambda: self.open_file(1))
-
-        self.horizontalSlider.valueChanged.connect(iso_slider)
-        self.verticalSlider.valueChanged.connect(self.opacity_slider)
-        self.verticalSlider.valueChanged.connect(self.opacity_slider)
-        self.verticalSlider_2.valueChanged.connect(self.opacity_slider)
-        self.verticalSlider_3.valueChanged.connect(self.opacity_slider)
-        self.verticalSlider_4.valueChanged.connect(self.opacity_slider)
-
-
-
-    
-
+        if self.dataDir:
+            self.horizontalSlider.valueChanged.connect(iso_slider)
+            self.verticalSlider.valueChanged.connect(lambda:casting_rendering(self.opacity_slider))
+            self.verticalSlider_2.valueChanged.connect(lambda:casting_rendering(self.opacity_slider))
+            self.verticalSlider_3.valueChanged.connect(lambda:casting_rendering(self.opacity_slider))
+            self.verticalSlider_4.valueChanged.connect(lambda:casting_rendering(self.opacity_slider))
 
     def opacity_slider(self):
-        volumeScalarOpacity.AddPoint(0,    self.verticalSlider.value()/100.0)
-        volumeScalarOpacity.AddPoint(500,  self.verticalSlider_2.value()/100.0)
-        volumeScalarOpacity.AddPoint(1000, self.verticalSlider_3.value()/100.0)
-        volumeScalarOpacity.AddPoint(1150, self.verticalSlider_4.value()/100.0)
-        iren_casting.update()
+        self.opacity = [self.verticalSlider.value()/100.0 , self.verticalSlider_2.value()/100.0 , self.verticalSlider_3.value()/100.0 , self.verticalSlider_4.value()/100.0]
+        casting_rendering(self.dataDir , self.opacity)
 
     def open_file(self , type):
         self.dataDir= QtWidgets.QFileDialog.getExistingDirectory(self, "Select Directory")
@@ -57,7 +48,7 @@ class MainWindow(QtWidgets.QMainWindow , main_gui.Ui_MainWindow):
 
 
 
-def casting_rendering(dataDir):
+def casting_rendering(dataDir , opacity):
     ren = vtk.vtkRenderer()
     renWin = vtk.vtkRenderWindow()
     renWin.AddRenderer(ren)
@@ -81,10 +72,11 @@ def casting_rendering(dataDir):
 
     # The opacity transfer function is used to control the opacity
     # of different tissue types.
-    volumeScalarOpacity.AddPoint(0,    0.00)
-    volumeScalarOpacity.AddPoint(500,  0.15)
-    volumeScalarOpacity.AddPoint(1000, 0.15)
-    volumeScalarOpacity.AddPoint(1150, 0.85)
+    volumeScalarOpacity = vtk.vtkPiecewiseFunction()
+    volumeScalarOpacity.AddPoint(0,    opacity[0])
+    volumeScalarOpacity.AddPoint(500,  opacity[1])
+    volumeScalarOpacity.AddPoint(1000, opacity[2])
+    volumeScalarOpacity.AddPoint(1150, opacity[3])
 
     volumeGradientOpacity = vtk.vtkPiecewiseFunction()
     volumeGradientOpacity.AddPoint(0,   0.0)
