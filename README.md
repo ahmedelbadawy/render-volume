@@ -1,6 +1,5 @@
-## Part 2
+# Volume Rendering App with VTK & Qt
 ------------
-#### volume rendering app with VTK & Qt
 
 * GUI had been created using `pyqt5` and `Qt Creator`
 
